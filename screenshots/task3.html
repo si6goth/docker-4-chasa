@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 3 — Docker Compose</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 850px; margin: 0 auto; }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .services { display: flex; gap: 16px; margin: 20px 0; }
+  .service { flex: 1; padding: 16px; border-radius: 8px; text-align: center; }
+  .web { background: #1a3a5c; border: 2px solid #4ec9b0; }
+  .db { background: #2d1a4e; border: 2px solid #c586c0; }
+  .pg { background: #1a4e3a; border: 2px solid #4ec9b0; }
+  .service-name { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+  .service-img { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+  .service-port { font-size: 12px; color: #dcdcaa; }
+  .arrow { display: flex; align-items: center; justify-content: center; color: #888; font-size: 24px; }
+  .output { color: #d4d4d4; margin: 4px 0 8px 0; padding-left: 12px; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 3 — Многоконтейнерное приложение (Docker Compose)</div>
+
+  <div class="services">
+    <div class="service web">
+      <div class="service-name" style="color: #4ec9b0;">&#9881; Web (Flask)</div>
+      <div class="service-img">python:3.11-slim</div>
+      <div class="service-port">Port: 5000:5000</div>
+    </div>
+    <div class="arrow">&#8594;</div>
+    <div class="service db">
+      <div class="service-name" style="color: #c586c0;">&#9776; PostgreSQL</div>
+      <div class="service-img">postgres:15</div>
+      <div class="service-port">Port: 5432 (internal)</div>
+    </div>
+  </div>
+  <div class="services">
+    <div class="service pg">
+      <div class="service-name" style="color: #4ec9b0;">&#128187; pgAdmin</div>
+      <div class="service-img">dpage/pgadmin4</div>
+      <div class="service-port">Port: 5050:80</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px;"></div>
+  <div class="comment"># Запуск всех сервисов</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker compose up -d</span></div>
+  <div class="output">[+] Running 3/3</div>
+  <div class="output"> &#9646; Network backend-network  Created</div>
+  <div class="output"> &#9646; Network frontend-network Created</div>
+  <div class="output"> &#9646; Container postgres-db    Started</div>
+  <div class="output"> &#9646; Container flask-web      Started</div>
+  <div class="output"> &#9646; Container pgadmin        Started</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Проверка работающих контейнеров</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker ps</span></div>
+  <div class="output">CONTAINER ID  IMAGE            STATUS         PORTS                    NAMES</div>
+  <div class="output">abc123        my-flask-app     Up 10 seconds  0.0.0.0:5000->5000       flask-web</div>
+  <div class="output">def456        postgres:15      Up 12 seconds  5432/tcp                 postgres-db</div>
+  <div class="output">ghi789        dpage/pgadmin4   Up 8 seconds   0.0.0.0:5050->80         pgadmin</div>
+</div>
+</body>
+</html>

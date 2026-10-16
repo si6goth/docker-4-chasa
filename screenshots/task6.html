@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 6 — Multi-stage build</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 850px; margin: 0 auto; }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .keyword { color: #c586c0; }
+  .string { color: #ce9178; }
+  .output { color: #d4d4d4; margin: 4px 0 8px 0; padding-left: 12px; }
+  .stages { display: flex; gap: 16px; margin: 20px 0; }
+  .stage { flex: 1; border-radius: 8px; padding: 16px; }
+  .builder { background: #1a3a5c; border: 2px solid #4ec9b0; }
+  .runtime { background: #2d4e1a; border: 2px solid #4ec9b0; }
+  .stage-name { font-weight: bold; margin-bottom: 8px; }
+  .builder .stage-name { color: #4ec9b0; }
+  .runtime .stage-name { color: #b5cea8; }
+  .stage-step { font-size: 12px; margin: 4px 0; color: #aaa; }
+  .arrow-down { color: #888; text-align: center; font-size: 24px; margin: 12px 0; }
+  .compare { display: flex; gap: 16px; margin-top: 20px; }
+  .compare-box { flex: 1; padding: 16px; border-radius: 8px; text-align: center; }
+  .big { background: #4e1a1a; border: 2px solid #f44336; }
+  .small { background: #1a4e1a; border: 2px solid #4caf50; }
+  .size { font-size: 28px; font-weight: bold; margin: 8px 0; }
+  .big .size { color: #f44336; }
+  .small .size { color: #4caf50; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 6 — Многоэтапная сборка (Multi-stage builds)</div>
+
+  <div class="stages">
+    <div class="stage builder">
+      <div class="stage-name">&#9881; Этап 1: builder</div>
+      <div class="stage-step"><span class="keyword">FROM</span> <span class="string">python:3.11-slim AS builder</span></div>
+      <div class="stage-step"><span class="keyword">RUN</span> pip install -r requirements.txt</div>
+      <div class="stage-step" style="color: #f44336;">Размер: ~900 MB</div>
+    </div>
+    <div class="stage runtime">
+      <div class="stage-name">&#9733; Этап 2: runtime</div>
+      <div class="stage-step"><span class="keyword">FROM</span> <span class="string">python:3.11-slim</span></div>
+      <div class="stage-step"><span class="keyword">COPY</span> --from=builder /opt/venv /opt/venv</div>
+      <div class="stage-step" style="color: #4caf50;">Размер: ~150 MB</div>
+    </div>
+  </div>
+
+  <div class="arrow-down">&#8595;</div>
+
+  <div class="compare">
+    <div class="compare-box big">
+      <div>Без multi-stage</div>
+      <div class="size">~900 MB</div>
+      <div style="font-size: 11px; color: #aaa;">Весь образ с зависимостями</div>
+    </div>
+    <div class="compare-box small">
+      <div>С multi-stage</div>
+      <div class="size">~150 MB</div>
+      <div style="font-size: 11px; color: #aaa;">Только runtime + зависимости</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px;"></div>
+  <div class="comment"># Команда сборки</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker build -t my-flask-app .</span></div>
+  <div class="output">[+] Building 45.2s (12/12) FINISHED</div>
+  <div class="output"> => [builder 1/4] FROM python:3.11-slim</div>
+  <div class="output"> => [stage-1 1/4] FROM python:3.11-slim</div>
+  <div class="output"> => [stage-1 2/4] COPY --from=builder /opt/venv /opt/venv</div>
+  <div class="output"> => [stage-1 3/4] COPY app.py .</div>
+  <div class="output"> => [stage-1 4/4] RUN groupadd -r appuser</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Сравнение размеров</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker images</span></div>
+  <div class="output">REPOSITORY        TAG      SIZE</div>
+  <div class="output">my-flask-app      latest   152MB</div>
+  <div class="output">python            3.11-slim 138MB</div>
+  <div class="output">postgres          15       379MB</div>
+</div>
+</body>
+</html>

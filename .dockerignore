@@ -1,0 +1,24 @@
+# .dockerignore (Задание 8)
+__pycache__/
+*.pyc
+*.pyo
+.env
+.env.*
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose*.yml
+docker-stack.yml
+*.md
+README*
+.vscode/
+.idea/
+*.svg
+*.png
+*.jpg
+*.jpeg
+tests/
+.pytest_cache/
+coverage.xml
+.mypy_cache/

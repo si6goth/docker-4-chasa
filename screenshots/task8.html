@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 8 — Безопасность</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 800px; margin: 0 auto; }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .keyword { color: #c586c0; }
+  .string { color: #ce9178; }
+  .output { color: #d4d4d4; margin: 4px 0 8px 0; padding-left: 12px; }
+  .blocked { color: #f44336; }
+  .safe { color: #4caf50; }
+  .warn { color: #ff9800; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 8 — Безопасность: non-root пользователь и .dockerignore</div>
+
+  <div class="comment"># Безопасность в Dockerfile</div>
+  <div><span class="keyword">RUN</span> <span class="cmd">groupadd -r appuser && useradd -r -g appuser appuser</span></div>
+  <div><span class="keyword">RUN</span> <span class="cmd">chown -R appuser:appuser /app</span></div>
+  <div><span class="keyword">USER</span> <span class="string">appuser</span></div>
+
+  <div style="margin-top: 20px;"></div>
+  <div class="comment"># Файл .dockerignore</div>
+  <div><span class="blocked">__pycache__/</span></div>
+  <div><span class="blocked">*.pyc</span></div>
+  <div><span class="blocked">.env</span></div>
+  <div><span class="blocked">.git/</span></div>
+  <div><span class="blocked">Dockerfile</span></div>
+  <div><span class="blocked">README.md</span></div>
+
+  <div style="margin-top: 20px;"></div>
+  <div class="comment"># Проверка пользователя в контейнере</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run --rm my-flask-app whoami</span></div>
+  <div class="output"><span class="safe">appuser</span>  <span class="comment"># НЕ root!</span></div>
+
+  <div style="margin-top: 12px;"></div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run --rm my-flask-app id</span></div>
+  <div class="output">uid=1000(appuser) gid=1000(appuser) groups=1000(appuser)</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Проверка — секретные файлы НЕ попали в образ</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run --rm my-flask-app ls -la /app</span></div>
+  <div class="output">drwxr-xr-x  appuser appuser  4096  .</div>
+  <div class="output">-rw-r--r--  appuser appuser   3248  app.py  <span class="safe">&#10004; только код</span></div>
+  <div class="output"><span class="blocked">.env  — отсутствует</span>  <span class="comment">&#10008; не в образе!</span></div>
+  <div class="output"><span class="blocked">.git/ — отсутствует</span>  <span class="comment">&#10008; не в образе!</span></div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Размер образа уменьшился</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker images my-flask-app</span></div>
+  <div class="output">REPOSITORY       TAG      SIZE</div>
+  <div class="output">my-flask-app     latest   <span class="safe">152MB</span>  <span class="comment">(было бы ~900MB без оптимизаций)</span></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 2 — Dockerfile для Flask</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', 'Courier New', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 800px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .output { color: #d4d4d4; margin: 4px 0 12px 0; padding-left: 12px; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .keyword { color: #c586c0; }
+  .string { color: #ce9178; }
+  .flag { color: #dcdcaa; }
+  .success { color: #b5cea8; }
+  .two-col { display: flex; gap: 20px; margin-top: 20px; }
+  .col { flex: 1; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 2 — Dockerfile для Flask-приложения</div>
+
+  <div class="comment"># Dockerfile</div>
+  <div><span class="keyword">FROM</span> <span class="string">python:3.11-slim</span></div>
+  <div><span class="keyword">WORKDIR</span> <span class="string">/app</span></div>
+  <div><span class="keyword">COPY</span> <span class="string">requirements.txt</span> .</div>
+  <div><span class="keyword">RUN</span> <span class="cmd">pip install --no-cache-dir -r requirements.txt</span></div>
+  <div><span class="keyword">COPY</span> <span class="string">.</span> .</div>
+  <div><span class="keyword">EXPOSE</span> <span class="string">5000</span></div>
+  <div><span class="keyword">CMD</span> [<span class="string">"python", "app.py"</span>]</div>
+
+  <div style="margin-top: 24px;"></div>
+  <div class="comment"># Сборка и запуск</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker build -t my-flask-app .</span></div>
+  <div class="output">Step 1/7 : FROM python:3.11-slim</div>
+  <div class="output"> ---> a-b-c-def123</div>
+  <div class="output">Step 2/7 : WORKDIR /app</div>
+  <div class="output"> ---> Running in xyz789</div>
+  <div class="output">Successfully built a1b2c3d4e5f6</div>
+  <div class="output">Successfully tagged my-flask-app:latest</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run -p 5000:5000 my-flask-app</span></div>
+  <div class="output"> * Running on http://0.0.0.0:5000</div>
+  <div class="output"> * Running on http://172.17.0.2:5000</div>
+
+  <div style="margin-top: 24px;"></div>
+  <div class="comment"># Проверка в браузере: http://localhost:5000</div>
+  <div><span class="prompt">$</span> <span class="cmd">curl http://localhost:5000</span></div>
+  <div class="output">{<span class="string">"message"</span>: <span class="string">"Hello, Docker!"</span>, <span class="string">"status"</span>: <span class="string">"running"</span>}</div>
+</div>
+</body>
+</html>

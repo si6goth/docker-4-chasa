@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 9 — Docker Swarm</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 850px; margin: 0 auto; }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .output { color: #d4d4d4; margin: 4px 0 8px 0; padding-left: 12px; }
+  .swarm { display: flex; gap: 16px; margin: 20px 0; }
+  .node { flex: 1; border: 2px solid #4ec9b0; border-radius: 8px; padding: 12px; }
+  .node-title { font-weight: bold; color: #4ec9b0; margin-bottom: 8px; }
+  .task { background: rgba(255,255,255,0.1); padding: 4px 8px; margin: 4px 0; border-radius: 4px; font-size: 12px; }
+  .running { color: #4caf50; }
+  .replicas { display: flex; gap: 8px; margin: 12px 0; justify-content: center; }
+  .replica { background: #1a3a5c; border: 2px solid #4ec9b0; border-radius: 8px; padding: 12px; text-align: center; width: 120px; }
+  .replica-name { font-weight: bold; font-size: 12px; margin-bottom: 4px; }
+  .replica-status { font-size: 11px; color: #4caf50; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 9 — Docker Swarm: оркестрация контейнеров</div>
+
+  <div class="comment"># Инициализация Swarm</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker swarm init</span></div>
+  <div class="output">Swarm initialized: current node [abc123] is now a manager</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Развёртывание стека</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker stack deploy -c docker-stack.yml myapp</span></div>
+  <div class="output">Stack myapp deployed to production</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Масштабирование до 3 реплик</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker service scale myapp_web=3</span></div>
+  <div class="output">myapp_web scaled to 3</div>
+
+  <div class="replicas">
+    <div class="replica">
+      <div class="replica-name">&#9881; web.1</div>
+      <div class="replica-status">&#9679; Running</div>
+    </div>
+    <div class="replica">
+      <div class="replica-name">&#9881; web.2</div>
+      <div class="replica-status">&#9679; Running</div>
+    </div>
+    <div class="replica">
+      <div class="replica-name">&#9881; web.3</div>
+      <div class="replica-status">&#9679; Running</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Распределение задач</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker service ps myapp_web</span></div>
+  <div class="output">NAME         IMAGE            NODE     DESIRED  CURRENT  STATE</div>
+  <div class="output">myapp_web.1  my-flask-app     node1    Running  1        Running</div>
+  <div class="output">myapp_web.2  my-flask-app     node2    Running  1        Running</div>
+  <div class="output">myapp_web.3  my-flask-app     node1    Running  1        Running</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Rolling update (обновление без даунтайма)</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker service update --image my-flask-app:latest myapp_web</span></div>
+  <div class="output">myapp_web</div>
+  <div class="output">image my-flask-app:latest ready</div>
+  <div class="output">new replica  myapp_web.1  started</div>
+  <div class="output">old replica  myapp_web.3  closing</div>
+  <div class="output">new replica  myapp_web.3  started</div>
+</div>
+</body>
+</html>

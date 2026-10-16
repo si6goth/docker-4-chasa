@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 4 — Volumes</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 850px; margin: 0 auto; }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .output { color: #d4d4d4; margin: 4px 0 8px 0; padding-left: 12px; }
+  .vol-box { background: #1a3a5c; border: 2px solid #4ec9b0; border-radius: 8px; padding: 16px; margin: 12px 0; }
+  .vol-name { color: #dcdcaa; font-weight: bold; }
+  .vol-path { color: #ce9178; }
+  .arrow { color: #888; text-align: center; font-size: 20px; margin: 8px 0; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 4 — Постоянное хранение данных (Volumes)</div>
+
+  <div class="vol-box">
+    <div class="vol-name">&#128193; Named Volume: postgres_data</div>
+    <div class="arrow">&#8595;</div>
+    <div class="vol-path">/var/lib/postgresql/data (в контейнере)</div>
+    <div style="margin-top: 8px; font-size: 12px; color: #aaa;">Данные сохраняются между перезапусками контейнеров</div>
+  </div>
+
+  <div class="vol-box" style="background: #2d4e1a; border-color: #4ec9b0;">
+    <div class="vol-name">&#128193; Bind Mount: ./app.py</div>
+    <div class="arrow">&#8595;</div>
+    <div class="vol-path">/app/app.py (в контейнере)</div>
+    <div style="margin-top: 8px; font-size: 12px; color: #aaa;">Изменения в коде применяются без пересборки образа</div>
+  </div>
+
+  <div style="margin-top: 24px;"></div>
+  <div class="comment"># Остановка и удаление контейнеров</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker compose down</span></div>
+  <div class="output">[+] Running 3/3</div>
+  <div class="output"> &#9646; Container pgadmin        Removed</div>
+  <div class="output"> &#9646; Container flask-web      Removed</div>
+  <div class="output"> &#9646; Container postgres-db    Removed</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Повторный запуск — данные PostgreSQL сохранены!</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker compose up -d</span></div>
+  <div class="output">[+] Running 3/3</div>
+  <div class="output"> &#9646; Container postgres-db    Started</div>
+  <div class="output"> &#9646; Container flask-web      Started</div>
+  <div class="output"> &#9646; Container pgadmin        Started</div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Создание тома вручную</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker volume create my_custom_volume</span></div>
+  <div class="output">my_custom_volume</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run -d -v my_custom_volume:/data --name test-volume alpine:latest tail -f /dev/null</span></div>
+  <div class="output">abc123def456</div>
+</div>
+</body>
+</html>

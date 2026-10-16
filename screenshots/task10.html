@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 10 — CI/CD с GitHub Actions</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 900px; margin: 0 auto; }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .output { color: #d4d4d4; margin: 4px 0 8px 0; padding-left: 12px; }
+  .keyword { color: #c586c0; }
+  .string { color: #ce9178; }
+  .pipeline { display: flex; align-items: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; justify-content: center; }
+  .step { background: #1a3a5c; border: 2px solid #4ec9b0; border-radius: 8px; padding: 12px 16px; text-align: center; font-size: 12px; }
+  .step-icon { font-size: 20px; margin-bottom: 4px; }
+  .step-name { font-weight: bold; }
+  .arrow { color: #888; font-size: 20px; }
+  .success { color: #4caf50; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 10 — CI/CD пайплайн: Docker + GitHub Actions</div>
+
+  <div class="pipeline">
+    <div class="step">
+      <div class="step-icon">&#128736;</div>
+      <div class="step-name">git push</div>
+    </div>
+    <div class="arrow">&#8594;</div>
+    <div class="step">
+      <div class="step-icon">&#9881;</div>
+      <div class="step-name">GitHub Actions</div>
+    </div>
+    <div class="arrow">&#8594;</div>
+    <div class="step">
+      <div class="step-icon">&#128230;</div>
+      <div class="step-name">Lint</div>
+    </div>
+    <div class="arrow">&#8594;</div>
+    <div class="step">
+      <div class="step-icon">&#128230;</div>
+      <div class="step-name">Build</div>
+    </div>
+    <div class="arrow">&#8594;</div>
+    <div class="step">
+      <div class="step-icon">&#128230;</div>
+      <div class="step-name">Test</div>
+    </div>
+    <div class="arrow">&#8594;</div>
+    <div class="step">
+      <div class="step-icon">&#128228;</div>
+      <div class="step-name">Docker Hub</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px;"></div>
+  <div class="comment"># Файл: .github/workflows/docker-build.yml</div>
+  <div><span class="keyword">name:</span> <span class="string">Docker Build and Push</span></div>
+  <div><span class="keyword">on:</span></div>
+  <div>&nbsp;&nbsp;<span class="keyword">push:</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">branches:</span> [main]</div>
+  <div><span class="keyword">jobs:</span></div>
+  <div>&nbsp;&nbsp;<span class="keyword">build:</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">runs-on:</span> <span class="string">ubuntu-latest</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">steps:</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="keyword">uses:</span> <span class="string">actions/checkout@v4</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="keyword">uses:</span> <span class="string">docker/build-push-action@v5</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="keyword">uses:</span> <span class="string">docker/login-action@v3</span></div>
+  <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="keyword">uses:</span> <span class="string">docker/push-action@v2</span></div>
+
+  <div style="margin-top: 20px;"></div>
+  <div class="comment"># После пуша — автоматическая сборка</div>
+  <div><span class="prompt">$</span> <span class="cmd">git push origin main</span></div>
+  <div class="output">Enumerating objects: 15, done.</div>
+  <div class="output">Writing objects: 100% (15/15), 12.34 KiB | 3.00 MiB/s</div>
+  <div class="output">To github.com:username/docker-flask-app.git</div>
+  <div class="output">   abc123..def456  main -> main</div>
+
+  <div style="margin-top: 12px;"></div>
+  <div class="output"><span class="success">&#10004; Workflow Docker Build and Push — passed</span></div>
+  <div class="output"><span class="success">&#10004; Image pushed: docker.io/username/docker-flask-app:latest</span></div>
+  <div class="output"><span class="success">&#10004; Image pushed: docker.io/username/docker-flask-app:def456</span></div>
+
+  <div style="margin-top: 16px;"></div>
+  <div class="comment"># Запуск образа на любой машине</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run -p 5000:5000 username/docker-flask-app:latest</span></div>
+  <div class="output"> * Running on http://0.0.0.0:5000</div>
+</div>
+</body>
+</html>

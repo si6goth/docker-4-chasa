@@ -1,0 +1,98 @@
+# ============================================================
+# Задание 3: Многоконтейнерное приложение (Docker Compose)
+# Задание 4: Volumes (постоянное хранение)
+# Задание 5: Сети и изоляция
+# Задание 7: Переменные окружения
+# Задание 8: Безопасность
+# ============================================================
+version: '3.8'
+
+services:
+  # --- Веб-приложение (Flask) ---
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask-web
+    # (Задание 4) Bind mount для разработки — код обновляется без пересборки
+    volumes:
+      - ./app.py:/app/app.py
+    ports:
+      # (Задание 5) Порт пробрасывается только для frontend-сети
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=${APP_ENV}
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+    # (Задание 3) Зависимость от базы данных
+    depends_on:
+      db:
+        condition: service_healthy
+    # (Задание 5) Сеть frontend
+    networks:
+      - frontend
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # --- PostgreSQL база данных ---
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    # (Задание 4) Именованный том для сохранения данных
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # (Задание 5) Порт НЕ пробрасываем — база недоступна с хоста
+    # (Задание 5) Только backend-сеть
+    networks:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- pgAdmin для просмотра БД ---
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    # (Задание 5) Только frontend-сеть
+    networks:
+      - frontend
+    restart: unless-stopped
+
+# ============================================================
+# (Задание 4) Именованный том для PostgreSQL
+# ============================================================
+volumes:
+  postgres_data:
+    driver: local
+
+# ============================================================
+# (Задание 5) Пользовательские сети для изоляции
+# ============================================================
+networks:
+  frontend:
+    driver: bridge
+    name: frontend-network
+  backend:
+    driver: bridge
+    name: backend-network

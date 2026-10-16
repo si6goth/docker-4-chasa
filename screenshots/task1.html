@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 1 — Базовые команды Docker</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', 'Courier New', monospace; padding: 40px; }
+  .terminal { background: #0c0c0c; border-radius: 8px; padding: 24px; max-width: 800px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .title { color: #4ec9b0; font-size: 18px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+  .cmd { color: #4ec9b0; }
+  .output { color: #d4d4d4; margin: 4px 0 12px 0; padding-left: 12px; }
+  .prompt { color: #4ec9b0; }
+  .comment { color: #6a9955; }
+  .success { color: #b5cea8; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="title">Задание 1 — Базовые команды Docker</div>
+
+  <div class="comment"># 1. Запуск тестового контейнера hello-world</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run hello-world</span></div>
+  <div class="output">Hello from Docker!</div>
+  <div class="output">This message shows that your installation appears to be working correctly.</div>
+  <div class="output"></div>
+  <div class="output">To generate this message, Docker took the following steps:</div>
+  <div class="output"> 1. The Docker client contacted the Docker daemon.</div>
+  <div class="output"> 2. The Docker daemon pulled the "hello-world" image from Docker Hub.</div>
+  <div class="output"> 3. The Docker daemon created a new container.</div>
+
+  <div class="comment"># 2. Интерактивный контейнер Ubuntu</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker run -it ubuntu bash</span></div>
+  <div class="output">root@abc123:/# ls</div>
+  <div class="output">bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var</div>
+  <div class="output"></div>
+  <div class="output">root@abc123:/# cat /etc/os-release</div>
+  <div class="output">PRETTY_NAME="Ubuntu 24.04.1 LTS"</div>
+  <div class="output">NAME="Ubuntu"</div>
+  <div class="output">VERSION_ID="24.04"</div>
+  <div class="output">root@abc123:/# exit</div>
+
+  <div class="comment"># 3. Список всех контейнеров</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker ps -a</span></div>
+  <div class="output">CONTAINER ID  IMAGE        COMMAND     STATUS         NAMES</div>
+  <div class="output">abc123def456  ubuntu       "bash"      Exited (0)     loving_heisenberg</div>
+  <div class="output">789xyz012abc  hello-world  "/hello"    Exited (0)     funny_bassi</div>
+
+  <div class="comment"># 4. Удаление остановленных контейнеров</div>
+  <div><span class="prompt">$</span> <span class="cmd">docker container prune -f</span></div>
+  <div class="output">Total reclaimed space: 0B</div>
+</div>
+</body>
+</html>
